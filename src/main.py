@@ -35,7 +35,7 @@ def get_document_bytes(overleaf_url: str) -> bytes:
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
-        page.goto(overleaf_url, wait_until="networkidle")
+        page.goto(overleaf_url)
         canvas_xpath = """//div[@class='canvasWrapper']"""
         page.wait_for_selector(canvas_xpath)
         download_button_xpath = r"//i[contains(@class, 'fa-download')]"

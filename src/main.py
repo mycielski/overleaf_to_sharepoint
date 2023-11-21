@@ -24,11 +24,32 @@ Example Usage:
 
 
 import os
+import tempfile
 
 from playwright.sync_api import sync_playwright
 
-DOWNLOAD_PATH = os.path.join(os.getcwd(), "document.pdf")
 OVERLEAF_URL = os.getenv("OVERLEAF_URL")
+
+
+def get_document_bytes(overleaf_url: str) -> bytes:
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(overleaf_url, wait_until="networkidle")
+        canvas_xpath = """//div[@class='canvasWrapper']"""
+        page.wait_for_selector(canvas_xpath)
+        download_button_xpath = r"//i[contains(@class, 'fa-download')]"
+        with page.expect_download() as download_info:
+            page.click(download_button_xpath)
+        download = download_info.value
+        with tempfile.TemporaryDirectory() as download_buffer:
+            path = os.path.join(download_buffer, download.suggested_filename)
+            download.save_as(path)
+            browser.close()
+            with open(path, "rb") as f:
+                document_bytes = f.read()
+
+    return document_bytes
 
 
 def main() -> None:
@@ -36,18 +57,7 @@ def main() -> None:
     Main function. No arguments but takes the Overleaf read-only
     share link provided as `OVERLEAF_URL` environment variable.
     """
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.goto(OVERLEAF_URL, wait_until="networkidle")
-        canvas_xpath = """//div[@class='canvasWrapper']"""
-        page.wait_for_selector(canvas_xpath)
-        download_button_xpath = r"//i[contains(@class, 'fa-download')]"
-        with page.expect_download() as download_info:
-            page.click(download_button_xpath)
-        download = download_info.value
-        download.save_as(DOWNLOAD_PATH)
-        browser.close()
+    get_document_bytes(overleaf_url=OVERLEAF_URL)
 
 
 if __name__ == "__main__":

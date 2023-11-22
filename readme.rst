@@ -11,6 +11,7 @@ Overview
 This Python project automates the retrieval of PDF documents from Overleaf and uploads them to a SharePoint site. It leverages the `playwright` library to interact with web pages programmatically.
 
 The project consists of a set of modules in the `src` directory:
+
 - `config.py`: Contains configuration for logging and headless browser mode.
 - `overleaf.py`: Handles the export of a PDF from an Overleaf project.
 - `sharepoint.py`: Automates the uploading of documents to SharePoint.

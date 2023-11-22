@@ -365,3 +365,4 @@ zsdoc/data
 # End of https://www.toptal.com/developers/gitignore/api/macos,venv,pycharm+all,python,zsh,vim
 
 *.pdf
+*.json

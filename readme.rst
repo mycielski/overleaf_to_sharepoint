@@ -1,42 +1,64 @@
-PDF Export Automation Script
-=============================
+==============================
+ Overleaf to SharePoint Export
+==============================
+
+Overview
+========
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-Overview
---------
+This Python project automates the retrieval of PDF documents from Overleaf and uploads them to a SharePoint site. It leverages the `playwright` library to interact with web pages programmatically.
 
-This module provides an automation script for exporting PDF documents from Overleaf projects.
-It uses the `playwright` library to automate a Chromium browser instance, allowing users to
-navigate to their Overleaf project and download the PDF output.
+The project consists of a set of modules in the `src` directory:
+- `config.py`: Contains configuration for logging and headless browser mode.
+- `overleaf.py`: Handles the export of a PDF from an Overleaf project.
+- `sharepoint.py`: Automates the uploading of documents to SharePoint.
+- `main.py`: Coordinates the entire process from retrieval to upload.
 
-The script requires a read-only share link from Overleaf, which should be provided via the
-`OVERLEAF_URL` environment variable. The script will save the downloaded PDF as 'document.pdf'
-in the current working directory.
+Requirements
+============
 
-Prerequisites
--------------
+- Python 3.x
+- Playwright library
+- Environment variables set for Overleaf and SharePoint URLs, and Microsoft account credentials.
 
-Ensure you have all the necessary requirements installed.
-You can install all required packages using:
+Installation
+============
+
+Clone the repository and navigate to the project directory:
 
 .. code-block:: bash
 
-    $ pip install -r requirements.txt
+    git clone [repository-url]
+    cd [project-directory]
 
-Environment Variables
----------------------
+Install dependencies:
 
-- `OVERLEAF_URL`: The Overleaf read-only share link. Example: `https://www.overleaf.com/read/hbduvlpfoewj#5e625c`
+.. code-block:: bash
+
+    pip install -r requirements.txt
 
 Usage
------
+=====
 
-To use the script, set the `OVERLEAF_URL` environment variable to your Overleaf read-only share link,
-and then execute the script:
+Set the necessary environment variables:
 
 .. code-block:: bash
 
-    $ export OVERLEAF_URL=<your_overleaf_read_only_link>
-    $ python src/main.py
+    export OVERLEAF_URL=[overleaf-read-only-share-link]
+    export SHAREPOINT_URL=[sharepoint-site-url]
+    export MICROSOFT_USERNAME=[your-email]
+    export MICROSOFT_PASSWORD=[your-password]
+    export COOKIES_FILE=[path-to-cookies-file]
+
+Run the main script:
+
+.. code-block:: bash
+
+    python src/main.py
+
+Documentation
+=============
+
+Each module contains a docstring describing its purpose and usage. Please refer to the module files for detailed information on each part of the project.

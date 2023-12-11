@@ -30,6 +30,7 @@ from playwright.sync_api import sync_playwright
 
 from config import *
 
+RENDER_TIMEOUT = 61_000
 URL = os.getenv("OVERLEAF_URL")
 
 logging.basicConfig(**LOGGING_BASIC_CONFIG)
@@ -64,6 +65,7 @@ def get_document_bytes(overleaf_url: str) -> Tuple[str, bytes]:
         logging.info(
             "Waiting for canvas to load (i.e. for the LaTeX to render). This may take a while..."
         )
+        page.set_default_timeout(RENDER_TIMEOUT)
         page.wait_for_selector(canvas_xpath)
         download_button_xpath = r"//i[contains(@class, 'fa-download')]"
         with page.expect_download() as download_info:

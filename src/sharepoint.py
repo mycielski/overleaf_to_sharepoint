@@ -66,7 +66,10 @@ def upload_document_to_sharepoint(
         page = context.new_page()
         logging.info("Navigating to SharePoint URL %s", sharepoint_url)
         page.goto(sharepoint_url)
-        if page.query_selector("""//input[@type='email']""") is not None:
+        if (
+            page.query_selector("""//input[@type='password']""") is not None
+            or page.query_selector("""//input[@type='email']""") is not None
+        ):
             log_in(page, password, username)
         page.click("""//i[@data-icon-name='upload']""")
         with TemporaryDirectory() as upload_buffer:
@@ -84,6 +87,12 @@ def upload_document_to_sharepoint(
 
         page.wait_for_selector("""//div[contains(text(),'Uploaded')]""")
         logging.info("File uploaded successfully")
+        logging.info("Saving cookies to file")
+        with open(COOKIES_FILE, "w") as cookies_file:
+            json.dump(page.context.cookies(), cookies_file)
+            logging.info("Saved %d cookies", len(page.context.cookies()))
+        logging.info("Closing browser")
+        browser.close()
 
 
 def log_in(page, password: str, username: str):
@@ -98,10 +107,18 @@ def log_in(page, password: str, username: str):
     :param password: The password for the Microsoft account.
     :return: None. The function performs actions but does not return any value.
     """
-    page.fill("""//input[@type='email']""", username)
-    page.click("""//input[@type='submit']""")
-    page.fill("""//input[@type='password']""", password)
-    page.click("""//input[@type='submit']""")
+    if page.query_selector("""//input[@type='email']""") is None:
+        page.fill("""//input[@type='email']""", username)
+        page.click("""//input[@type='submit']""")
+    if page.query_selector("""//input[@type='password']""") is None:
+        page.fill("""//input[@type='password']""", password)
+        page.click("""//input[@type='submit']""")
+    ...
+    # save cookies
+    with open(COOKIES_FILE, "w") as cookies_file:
+        logging.info("Saving cookies to file")
+        json.dump(page.context.cookies(), cookies_file)
+        logging.info("Saved %d cookies", len(page.context.cookies()))
 
 
 if __name__ == "__main__":
